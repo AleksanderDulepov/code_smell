@@ -1,50 +1,39 @@
-# У нас есть какой-то юнит, которому мы в параметры передаем
-# - наше игровое поле
-# - х координату
-# - у координату
-# - направление смещения
-# - летит ли он
-# - крадется ли он
-# - скорость
-# В этом примере есть сразу несколько запахов плохого кода. Исправьте их
-#   (длинный метод, длинный список параметров)
-
-
 class Unit:
-    def move(self, field, x_coord, y_coord, direction, is_fly, crawl, speed = 1):
+    field = Field()
 
-        if is_fly and crawl:
-            raise ValueError('Рожденный ползать летать не должен!')
+    def __init__(self, x_coord, y_coord, method_move, speed):
+        self._x_coord = x_coord
+        self._y_coord = y_coord
+        self._method_move = method_move
+        self._speed = self._get_speed(self, speed)
 
-        if is_fly:
-            speed *= 1.2
-            if direction == 'UP':
-                new_y = y_coord + speed
-                new_x = x_coord
-            elif direction == 'DOWN':
-                new_y = y_coord - speed
-                new_x = x_coord
-            elif direction == 'LEFT':
-                new_y = y_coord
-                new_x = x_coord - speed
-            elif direction == 'RIGTH':
-                new_y = y_coord
-                new_x = x_coord + speed
-        if crawl:
-            speed *= 0.5
-            if direction == 'UP':
-                new_y = y_coord + speed
-                new_x = x_coord
-            elif direction == 'DOWN':
-                new_y = y_coord - speed
-                new_x = x_coord
-            elif direction == 'LEFT':
-                new_y = y_coord
-                new_x = x_coord - speed
-            elif direction == 'RIGTH':
-                new_y = y_coord
-                new_x = x_coord + speed
 
-            field.set_unit(x=new_x, y=new_y, unit=self)
+    def move(self, direction):
+        if direction == 'UP':
+            new_y = self._y_coord + self._speed
+            new_x = self._x_coord
+            self._get_move(new_x, new_y)
+        elif direction == 'DOWN':
+            new_y = self._y_coord - self._speed
+            new_x = self._x_coord
+            self._get_move(new_x, new_y)
+        elif direction == 'LEFT':
+            new_y = self._y_coord
+            new_x = self._x_coord - self._speed
+            self._get_move(new_x, new_y)
+        elif direction == 'RIGTH':
+            new_y = self._y_coord
+            new_x = self._x_coord + self._speed
+            self._get_move(new_x, new_y)
 
-#     ...
+
+    def _get_speed(self, speed):
+        if self._method_move == "fly":
+            return speed * 1.2
+        elif self._method_move == "crawl":
+            return speed * 0.5
+        raise ValueError('Рожденный ползать летать не должен!')
+
+
+    def _get_move(self, new_x, new_y):
+        field.set_unit(x=new_x, y=new_y, unit=self)
